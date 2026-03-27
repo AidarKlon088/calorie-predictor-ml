@@ -22,21 +22,19 @@ The model is trained using **Linear Regression** from scikit-learn.
 ## Project Structure
 
 ```
-AI-project/
+AI project/
 │
-├── app.py
-├── train.py
-├── calorie_dataset.csv
-├── linear_model.joblib
-├── metrics.txt
-├── requirements.txt
-│
-├── static/
-│   └── plot.png
-│
-├── templates/
-│   └── index.html
-```
+├─ app.py # Flask-приложение
+├─ train.py # Скрипт обучения модели
+├─ linear_model.joblib # Сохранённая модель
+├─ calorie_dataset.csv # Датасет с данными
+├─ metrics.txt # Метрики модели
+├─ test.py # Скрипт тестирования модели
+├─ requirements.txt # Зависимости проекта
+├─ templates/
+│ └─ index.html # HTML-шаблон
+├─ static/
+│ └─ plot.png # График
 
 ##  Installation
 
