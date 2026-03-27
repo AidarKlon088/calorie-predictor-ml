@@ -1,4 +1,4 @@
-#  Calorie Prediction App
+#  Calorie Prediction 
 
 This project is a simple machine learning web application that predicts calories based on nutritional values.
 
