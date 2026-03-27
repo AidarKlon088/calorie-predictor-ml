@@ -2,11 +2,22 @@ from flask import Flask, render_template, request
 import joblib
 import pandas as pd
 import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
 
 app = Flask(__name__)
 
 model = joblib.load('linear_model.joblib')
 df = pd.read_csv('calorie_dataset.csv')
+
+X = df[['protein_g', 'fat_g', 'carbs_g', 'sugar_g']]
+y = df['calories']
+
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+y_pred = model.predict(X_test)
 
 with open('metrics.txt') as f:
     metrics = f.read()
@@ -21,24 +32,31 @@ def index():
         carbs = float(request.form['carbs'])
         sugar = float(request.form['sugar'])
 
-        X_new = [[protein, fat, carbs, sugar]]
-        prediction = model.predict(X_new)[0]
+     
+        prediction = model.predict([[protein, fat, carbs, sugar]])[0]
 
-        plt.figure(figsize=(5,4))
-        plt.bar(['Protein','Fat','Carbs','Sugar'], [protein, fat, carbs, sugar], color='orange')
-        plt.ylabel('Граммы')
-        plt.title('Состав введённой еды')
-        plt.savefig('static/plot.png')  # сохраняем в static
-        plt.close()  # закрываем график, чтобы Flask мог его отобразить
+        
+        nutrients = ['Protein', 'Fat', 'Carbs', 'Sugar']
+        values = [protein, fat, carbs, sugar]
 
-    samples = df.head(10).to_html(classes='table')
+        plt.figure(figsize=(6,4))
+        
 
-    return render_template(
-        'index.html',
-        prediction=prediction,
-        samples=samples,
-        metrics=metrics
-    )
+        plt.scatter(y_test, y_pred, alpha=0.7, color='red', label='Тестовые данные')
+        plt.plot([min(y_test), max(y_test)], [min(y_test), max(y_test)], color='green', linestyle='--', label='Идеальная линия')
+
+  
+        
+        plt.ylabel('Калории / Граммы')
+        plt.title('Линейная регрессия и состав еды')
+        plt.grid(True)
+        plt.legend()
+        plt.savefig('static/plot.png')
+        plt.close()
+
+    samples = df.head(10).to_html(classes='table table-striped')
+
+    return render_template('index.html', prediction=prediction, samples=samples, metrics=metrics)
 
 if __name__ == '__main__':
     app.run(debug=True)
